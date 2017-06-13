@@ -1,4 +1,4 @@
-#spoti-flask
+# spoti-flask
 
 This is a small flask application creating an API for controlling Spotify on a
 computer. It’s built to work with the spot.coffee script in [Minton’s Spot repo.](https://github.com/minton/spot) (All functionality not necessarily supported
