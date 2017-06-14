@@ -56,57 +56,55 @@ def seconds_remaining():
 def play():
     spotify.play()
     info = current_track_info()
-    return jsonify("Now playing '{}' by {}.".format(info['title'],
-                                                   info['artist']))
+    return "Now playing '{}' by {}.".format(info['title'], info['artist'])
+
 @app.route("/pause", methods=['PUT'])
 def pause():
     spotify.pause()
-    return jsonify("Everything is paused.")
+    return "Everything is paused."
 
 @app.route("/next", methods=['PUT'])
 def next():
     spotify.next_track()
     time.sleep(.1)
     info = current_track_info()
-    return jsonify("OK, fine. Maybe you'll like {} by {}".format(info['title'],
-                                                   info['artist']))
+    return "OK, fine. Maybe you'll like {} by {}".format(info['title'], info['artist'])
+
 @app.route("/back", methods=['PUT'])
 def back():
     spotify.previous_track()
     time.sleep(.1)
     info = current_track_info()
-    return jsonify("Play it again, Sam. 'It' being {} by {}".format(info['title'],
-                                                   info['artist']))
+    return "Play it again, Sam. 'It' being {} by {}".format(info['title'], info['artist'])
 
 @app.route("/playing")
 def playing():
     info = current_track_info()
-    return jsonify("Now playing '{}' by {}.".format(info['title'],
-                                                   info['artist']))
+    return "Now playing '{}' by {}.".format(info['title'], info['artist'])
 
 @app.route("/volume", methods=['GET','PUT'])
 def volume():
     if request.method == 'GET':
         vol = spotify.sound_volume.get()
-        return jsonify(vol)
+        return str(vol)
     if request.method == 'PUT':
         new_vol = request.args.get('volume')
         spotify.sound_volume.set(new_vol)
-        return jsonify(int(new_vol))
+        return str(new_vol)
 
 @app.route("/bumpup", methods=['PUT'])
 def bumpup():
     vol = int(spotify.sound_volume.get())
     new_vol = vol + 6
     spotify.sound_volume.set(new_vol)
-    return jsonify(int(new_vol))
+    return str(new_vol)
 
 @app.route("/bumpdown", methods=['PUT'])
 def bumpdown():
     vol = int(spotify.sound_volume.get())
     new_vol = vol - 4
     spotify.sound_volume.set(new_vol)
-    return jsonify(int(new_vol))
+    return str(new_vol)
 
 #/play-uri
 @app.route("/play-uri", methods=['POST'])
@@ -127,7 +125,7 @@ def how_much_longer():
     seconds_left = seconds_remaining()
     if seconds_left < 60:
         return jsonify("{} seconds left".format(seconds_left))
-    return jsonify("{}:{:02d} left".format(int(seconds_left/60), seconds_left%60))
+    return "{}:{:02d} left".format(int(seconds_left/60), seconds_left%60)
 
 @app.route("/single-query")
 def single_query():
