@@ -3,16 +3,23 @@ import appscript
 import time
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-
+import spotipy.util as util
+import os
 
 app = Flask(__name__)
 spotify = appscript.app("Spotify")
+spotify_user = os.environ["SPOTIFLASK_SPOTIFY_USER"]
 
 #Oauth2 for spotify API access
 #Be sure you have SPOTIPY_CLIENT_ID and SPOTIPY_CLIENT_SECRET
 #environment variables on this machine
 client_credentials_manager = SpotifyClientCredentials()
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+#Separate oauth2 for modifying playlist
+scope = "playlist-modify-private"
+token = util.prompt_for_user_token(spotify_user, scope)
+sp2 = spotipy.Spotify(auth=token)
 
 def spotify_search(query,limit):
     results = sp.search(q=query, limit=limit, market="US")
@@ -144,6 +151,13 @@ def query():
     for result in results:
         response.append(serialize_track(result))
     return jsonify(response)
+
+@app.route("/add-to-playlist", methods=["POST"])
+def add_to_playlist():
+    track_uri = request.args.get("track_uri")
+    playlist_uri = request.args.get("playlist_uri")
+    sp2.user_playlist_add_tracks(spotify_user, playlist_uri, [track_uri])
+    return "Added."
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
